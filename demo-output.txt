@@ -1,0 +1,147 @@
+
+=== step1_neuron.py
+Take an umbrella?  weights: clouds +2, forecast +3, car -4. Yes if the sum is above 2.
+   clouds 0  forecast 0  car 0   sum  0   no
+   clouds 0  forecast 0  car 1   sum -4   no
+   clouds 0  forecast 1  car 0   sum  3   yes
+   clouds 0  forecast 1  car 1   sum -1   no
+   clouds 1  forecast 0  car 0   sum  2   no
+   clouds 1  forecast 0  car 1   sum -2   no
+   clouds 1  forecast 1  car 0   sum  5   yes
+   clouds 1  forecast 1  car 1   sum  1   no
+both (AND)           weights [1, 1], bias -1   answers for 00 01 10 11: 0 0 0 1
+at least one (OR)    weights [1, 1], bias  0   answers for 00 01 10 11: 0 1 1 1
+not the first (NOT)  weights [-1, 0], bias  1   answers for 00 01 10 11: 1 1 0 0
+Left or right mark, 400 weights set by hand: 1000 of 1,000 cards right.
+That took 400 numbers, and we knew the answer in advance. For the letter X against the letter E, nobody knows the 400 numbers.
+
+=== step2_learn.py
+Cards one at a time. Left = 0, right = 1. All 400 weights start at zero.
+   card  1: mark on the left   guess left   right
+   card  2: mark on the right  guess left   WRONG, weights change
+   card  3: mark on the right  guess right  right
+   card  4: mark on the left   guess right  WRONG, weights change
+   card  5: mark on the left   guess left   right
+   card  6: mark on the right  guess left   WRONG, weights change
+   card  7: mark on the left   guess left   right
+   card  8: mark on the right  guess right  right
+   card  9: mark on the right  guess right  right
+   card 10: mark on the right  guess right  right
+   card 11: mark on the right  guess right  right
+   card 12: mark on the right  guess right  right
+2,000 fresh cards, how many it gets right:
+   after    0 cards: 1036 of 2,000
+   after    1 cards: 1036 of 2,000
+   after    2 cards:  964 of 2,000
+   after    5 cards: 1174 of 2,000
+   after   10 cards: 1341 of 2,000
+   after   20 cards: 1724 of 2,000
+   after   50 cards: 1928 of 2,000
+   after  100 cards: 1928 of 2,000
+   after  200 cards: 2000 of 2,000
+   after  500 cards: 2000 of 2,000
+   after 1000 cards: 2000 of 2,000
+Mistakes in the first 50 cards: 10. In all 10,000 cards: 14. The last mistake was on card 145.
+The weights after 10,000 cards, by column (sum of the 20 squares in each column):
+   -8 -12 -12 -16 -12 -16 -16 -12 -8 0 0 8 12 12 12 4 16 16 16 16
+   left half: 112 of 200 weights below zero. right half: 112 of 200 above zero.
+
+=== step3_mark1.py
+pass 1 through the 2,000 training letters: 1105 corrections; 1,000 new letters: 905 right
+pass 2 through the 2,000 training letters: 412 corrections; 1,000 new letters: 950 right
+pass 3 through the 2,000 training letters: 260 corrections; 1,000 new letters: 941 right
+pass 4 through the 2,000 training letters: 195 corrections; 1,000 new letters: 967 right
+pass 5 through the 2,000 training letters: 161 corrections; 1,000 new letters: 958 right
+pass 6 through the 2,000 training letters: 132 corrections; 1,000 new letters: 963 right
+pass 7 through the 2,000 training letters:  89 corrections; 1,000 new letters: 976 right
+pass 8 through the 2,000 training letters:  61 corrections; 1,000 new letters: 978 right
+pass 9 through the 2,000 training letters:  70 corrections; 1,000 new letters: 977 right
+pass 10 through the 2,000 training letters:  57 corrections; 1,000 new letters: 976 right
+Photocells 400, middle units 512 (each with 20 random wires), response units used 4, knobs 2048.
+On average 94 of the 512 middle units fire for a letter.
+Knob turns in training: 241,659.
+New letters right: 976 of 1,000  (X 241 of 250, E 247 of 250, T 247 of 250, O 241 of 250)
+Before any training: 250 of 1,000.
+.##########......#..
+############........
+##........##........
+##........##........
+##........##.....#..
+##........##........
+##........##........
+##........##........
+##........##........
+##........##........
+############........
+.##########.........
+....................
+...........#........
+..#.................
+....................
+....................
+....................
+....................
+..#...............#.
+
+=== step4_converge.py
+gap    problems   mistakes: fewest  average  most    ceiling on average
+ 20       200               2      2.9      5              17
+ 10       200               1      5.3     13              62
+  5       200               2      9.5     29             212
+  2       200               2     19.3     83             986
+  1       200               2     24.8    161           2,613
+1,000 problems. The rule stopped on every one. Closest it came to its ceiling: 30% of it.
+The drawn example: 30 points, gap 6, 8 mistakes, ceiling 184.
+
+=== step5_xor.py
+The stairway lamp, 1,000,000 cards: the weights changed 480,332 times and never settled.
+   most cases right at any moment: 3 of 4. Different settings of the three numbers it visited: 53.
+9,261 cells tried. Of the 16 possible rules for two switches, a single cell can do 14.
+   the missing ones (answers for 00 01 10 11): 0 1 1 0  1 0 0 1
+   cells that do AND: 220, OR: 385, the stairway lamp: 0
+Odd or even number of lit squares, 9 squares, 512 pictures, 300 passes each:
+   a unit may look at    middle units    best the machine reached
+   1 square               10            326 of 512
+   2 squares              46            287 of 512
+   3 squares             130            280 of 512
+   4 squares             256            281 of 512
+   5 squares             382            282 of 512
+   6 squares             466            324 of 512
+   7 squares             502            382 of 512
+   8 squares             511            511 of 512
+   9 squares             512            512 of 512   (after 1 passes)
+
+=== step6_hidden.py
+Three cells set by hand:   switches   A (at least one)   B (both)   lamp
+                              0 0            0              0        0
+                              0 1            1              0        1
+                              1 0            1              0        1
+                              1 1            1              1        0
+Random middle cells, last cell learns. Machines out of 20 that got every case right:
+switches  cases   middle cells:     2    4    8   16   32   64  128  256  512
+   2         4                     0    1    8   14   20    -    -    -    -
+   3         8                     0    0    1   14   20    -    -    -    -
+   4        16                     0    0    1    5   17   20    -    -    -
+   5        32                     0    0    0    1   11   20    -    -    -
+   6        64                     0    0    0    0    1   17   20    -    -
+   7       128                     0    0    0    0    0    0   18   20    -
+   8       256                     0    0    0    0    0    0    1   19   20
+Middle cells needed for 18 of 20 machines: 2 switches: 32, 3 switches: 32, 4 switches: 64, 5 switches: 64, 6 switches: 128, 7 switches: 128, 8 switches: 256
+
+=== step7_backprop.py
+The stairway lamp, 2 middle cells, every weight learned: 62 of 100 random starts solved it.
+   passes through the four cases: fastest 146, middle 324, slowest 758
+   with 4 middle cells: 100 of 100.
+   one run in detail: solved after 325 passes. Lamp guesses for 00 01 10 11 at the end: 0.12 0.94 0.81 0.09
+   its two middle cells answer for 00 01 10 11: 0.81 1.00 0.11 0.86  and  0.03 0.90 0.00 0.02
+Odd or even, trained middle cells (10 starts each)   against random middle cells from step 6:
+   2 switches:  4 trained cells, solved in 10 of 10 starts.   Random cells needed: 32
+   3 switches:  6 trained cells, solved in  9 of 10 starts.   Random cells needed: 32
+   4 switches:  8 trained cells, solved in 10 of 10 starts.   Random cells needed: 64
+   5 switches: 10 trained cells, solved in  7 of 10 starts.   Random cells needed: 64
+   6 switches: 12 trained cells, solved in  5 of 10 starts.   Random cells needed: 128
+Letters,  4 trained middle cells: 1000 of 1,000 new letters right after 10 passes  (pass by pass: 825 933 986 998 998 1000 1000 1000 1000 1000)
+Letters, 16 trained middle cells: 999 of 1,000 new letters right after 10 passes  (pass by pass: 937 990 995 997 999 999 999 999 999 999)
+The Mark I of step 3, 512 random middle cells: 976 of 1,000.
+
+All checks passed.
